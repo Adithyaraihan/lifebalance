@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model BodyMetric {
+  id        Int      @id @default(autoincrement())
+  weightKg  Float
+  heightCm  Float
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+
+model Sleep {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  hours     Float
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, date])
+}
+
+
+model Article {
+  id        Int      @id @default(autoincrement())
+  judul     String   @unique
+  author    String
+  abstract  String   @db.LongText
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Habit {
+  id        Int      @id @default(autoincrement())
+  title     String
+  weekStart DateTime
+  done    Boolean  @default(false)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+}
+
+
+model AIChat {
+  id        Int      @id @default(autoincrement())
+  question  String
+  answer    String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+
+
+model Todo {
+  id        Int      @id @default(autoincrement())
+  text      String
+  deadline  DateTime
+  completed Boolean  @default(false)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+
+model User {
+  id                 Int      @id @default(autoincrement())
+  fullName           String
+  username           String   @unique
+  email              String   @unique
+  password           String
+  isActive           Boolean  @default(false)
+  activationCode     String?
+  refreshToken       String?  
+  googleAccessToken  String?
+  googleRefreshToken String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  activityHistories ActivityHistory[] 
+  habits            Habit[]
+  todos             Todo[]
+  bodyMetrics       BodyMetric[]
+  sleep             Sleep[]
+  aiChat            AIChat[]
+}
+
+
+model ActivityHistory { //step dari google fit
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  date      DateTime
+  steps     Int
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+}
