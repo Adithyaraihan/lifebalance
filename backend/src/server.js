@@ -20,11 +20,17 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Selamat datang di Be Lifebalance API",
+  });
+});
 
 app.use("/api/googlefit", fitRouter);
 app.use("/api/step", stepRouter);
@@ -37,5 +43,5 @@ app.use("/api/aichat", aiRouter);
 app.use("/api/auth", authRouter);
 
 app.listen(5000, () =>
-  console.log("\n✅ Server berjalan di http://localhost:5000")
+  console.log("\n✅ Server berjalan di http://localhost:5000"),
 );
